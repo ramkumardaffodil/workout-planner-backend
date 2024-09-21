@@ -15,10 +15,6 @@
   "engines": {
     "node": "16.x"
   },
-  "pre-commit": [
-    "build",
-    "lint"
-  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
