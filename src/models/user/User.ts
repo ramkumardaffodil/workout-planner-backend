@@ -68,7 +68,6 @@ userSchema.statics.addRefreshToken = async function (id: string, refreshToken: s
 
 userSchema.statics.findUserForRefreshToken = async function (id: string, refreshToken: string) {
 	const user = await this.findById(id);
-	console.log(user);
 	if (user && user.refreshToken === refreshToken) {
 		return user;
 	} else {

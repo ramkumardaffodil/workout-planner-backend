@@ -8,8 +8,7 @@ export const createWorkout = async (req: Request, res: Response) => {
 	if (req.isAuth) {
 		const { age, gender, weight, height, injuries, trainingLevel, trainingType } = req.body;
 		const { _id: userId } = req.user;
-
-		if (isEmptyFields({ age, gender, weight, height, injuries, trainingLevel, trainingType })) {
+		if (isEmptyFields({ age, gender, weight, height, injuries, trainingLevel })) {
 			return res.status(400).json({ error: 'Either Age/Gender/Weight/Height/TrainingLevel is empty' });
 		}
 		const userDetails = await UserDetails.create({
@@ -25,7 +24,7 @@ export const createWorkout = async (req: Request, res: Response) => {
 
 		const isWorkoutExist = await PlansSchema.findOne({ userId });
 		if (isWorkoutExist) {
-			return res.status(400).json({ error: 'Workout already created' });
+			return res.status(200).json({ workouts: isWorkoutExist });
 		}
 
 		const prompt = `
@@ -104,7 +103,7 @@ export const createWorkout = async (req: Request, res: Response) => {
 			.replace(/```/g, '')
 			.trim();
 		plans = JSON.parse(plans);
-
+		//@ts-ignore
 		const workouts = await PlansSchema.create({
 			userId,
 			userDetailId: userDetails._id,
@@ -112,7 +111,7 @@ export const createWorkout = async (req: Request, res: Response) => {
 			plans: plans.map((dayPlan: any) => ({
 				day: dayPlan.day,
 				bodyPart: dayPlan.bodyPart,
-				excercises: dayPlan.exercises.map((exercise: any) => ({
+				exercises: dayPlan.exercises.map((exercise: any) => ({
 					name: exercise.name,
 					sets: exercise.sets,
 					reps: exercise.reps,
@@ -126,3 +125,38 @@ export const createWorkout = async (req: Request, res: Response) => {
 		return res.status(403).json({ err: 'Authroization error' });
 	}
 };
+
+export const getAllPlans = async (req:Request,res:Response)=>{
+	if(req.isAuth){
+		const { _id:userId } = req.user;
+		const isWorkoutExist = await PlansSchema.findOne({ userId });
+		if (isWorkoutExist) {
+			return res.status(200).json({ workouts: isWorkoutExist });
+		}
+		return res.status(404).json({ error: 'No workout found' });
+	}else{
+		return res.status(403).json({ error: 'Authroization error' });
+	}
+}
+
+export const getSuggestions = async (req:Request,res:Response)=>{
+	if(req.isAuth){
+		const {prompt} = req.body;
+		const openai = new OpenAI({
+			apiKey: process.env.OPEN_API_KEY,
+		});
+
+		const aiResponse = await openai.chat.completions.create({
+			messages: [{ role: 'user', content: prompt }],
+			model: 'gpt-4o-mini',
+			max_tokens: 4000,
+		});
+		console.log('response',aiResponse)
+		if (aiResponse) {
+			return res.status(200).json({ suggestions:aiResponse.choices[0].message.content });
+		}
+		return res.status(404).json({ error: 'No response found', prompt });
+	}else{
+		return res.status(403).json({ error: 'Authroization error' });
+	}
+} 

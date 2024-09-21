@@ -17,7 +17,7 @@ const plansSchema = new Schema(
 			{
 				day: String,
 				bodyPart: String,
-				excercises: [exerciseSchema],
+				exercises: [exerciseSchema],
 			},
 		],
 	},

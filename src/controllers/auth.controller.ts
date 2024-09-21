@@ -32,8 +32,12 @@ export class AuthController {
 			return res.status(400).json({ err: 'All fields are mandatory!' });
 		}
 
-		if (!validator.isEmail(email) || password.length < 6) {
-			return res.status(400).json({ err: 'Either email/password/phonenumber is not valid' });
+		if (!validator.isEmail(email)) {
+			return res.status(400).json({ err: 'Either email is not valid' });
+		}
+
+		if (password.length < 6) {
+			return res.status(400).json({ err: 'Password must be at least 6 characters' });
 		}
 
 		try {
@@ -59,8 +63,12 @@ export class AuthController {
 			return res.status(400).json({ err: 'All fields are mandatory!' });
 		}
 
-		if (!validator.isEmail(email) || password.length < 6) {
-			return res.status(400).json({ err: 'Either email/password is not valid' });
+		if (!validator.isEmail(email)) {
+			return res.status(400).json({ err: 'Either email is not valid' });
+		}
+
+		if (password.length < 6) {
+			return res.status(400).json({ err: 'Password must be at least 6 characters' });
 		}
 
 		try {
@@ -71,7 +79,6 @@ export class AuthController {
 			const refreshToken = await getJwtToken(userdoc, process.env.JWT_REFRESH_SECRET as string, '1d');
 
 			const user = await User.addRefreshToken(userdoc._id, refreshToken);
-			delete user.password;
 			return res.status(200).json({
 				email: user.email,
 				userId: user._id,
@@ -79,7 +86,6 @@ export class AuthController {
 				refreshToken,
 			});
 		} catch (error: any) {
-			console.log(error);
 			return res.status(400).json({ err: formatDbError(error) });
 		}
 	};
