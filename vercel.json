@@ -11,5 +11,13 @@
         "src": "/(.*)",
         "dest": "build/app.js"
       }
-    ]
+    ],
+    "functions": {
+      "auth/**/*": {
+        "maxDuration": 20
+      },
+      "workout/**/*": {
+        "maxDuration": 20
+      }
+    }
   }
