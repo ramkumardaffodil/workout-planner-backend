@@ -5,7 +5,12 @@
   "main": "build/app.js",
   "scripts": {
     "dev": "nodemon",
-    "start":"nodemon app.ts"
+    "postinstall": "tsc",
+    "watch-node": "nodemon build/app.js",
+    "start": "yarn build && node build/app.js",
+    "build": "rimraf ./build && prettier --check src/ && tsc",
+    "prettier:fix": "prettier --write src/",
+    "lint": "eslint --ext .ts src/"
   },
   "engines": {
     "node": "16.x"
@@ -54,7 +59,6 @@
     "mongoose": "^5.12.5",
     "mongoose-unique-validator": "^2.0.3",
     "nodemailer": "^6.6.0",
-    "openai": "^4.0.0",
     "path-exists": "^5.0.0",
     "randomstring": "^1.1.5",
     "twilio": "^3.61.0",

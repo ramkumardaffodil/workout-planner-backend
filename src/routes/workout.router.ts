@@ -6,10 +6,8 @@ const workoutRouter: Router = Router();
 
 workoutRouter.post('/create-workout', isAuth, createWorkout);
 
-workoutRouter.get('/get-plans',isAuth,getAllPlans);
+workoutRouter.get('/get-plans', isAuth, getAllPlans);
 
-workoutRouter.post('/get-suggestions',isAuth,getSuggestions);
-
-
+workoutRouter.post('/get-suggestions', isAuth, getSuggestions);
 
 export default workoutRouter;
