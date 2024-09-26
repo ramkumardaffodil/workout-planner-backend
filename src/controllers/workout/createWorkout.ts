@@ -120,7 +120,7 @@ export const createWorkout = async (req: Request, res: Response) => {
 				})),
 			})),
 		});
-		return res.status(200).json({ workouts: 'test' });
+		return res.status(200).json({ workouts });
 	} else {
 		return res.status(403).json({ err: 'Authroization error' });
 	}
