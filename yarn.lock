@@ -2492,9 +2492,9 @@
     "wrappy" "1"
 
 "openai@^4.0.0":
-  "integrity" "sha512-Y9V4KODbmrOpqiOmCDVnPfMxMqKLOx8Hwcdn/r8mePq4yv7FSXGnxCs8/jZKO7zCB/IVPWihpJXwJNAIOEiZ2g=="
-  "resolved" "https://registry.npmjs.org/openai/-/openai-4.63.0.tgz"
-  "version" "4.63.0"
+  "integrity" "sha512-+o4vDKn2xzNMeR71rFMCPLr2penpwoALgRoJyIboIBOlkKjw+SoRiBOlO9ss1diXM4Elv01L/iliyr2oqY/l+A=="
+  "resolved" "https://registry.npmjs.org/openai/-/openai-4.64.0.tgz"
+  "version" "4.64.0"
   dependencies:
     "@types/node" "^18.11.18"
     "@types/node-fetch" "^2.6.4"

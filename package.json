@@ -5,12 +5,7 @@
   "main": "build/app.js",
   "scripts": {
     "dev": "nodemon",
-    "postinstall": "tsc",
-    "watch-node": "nodemon build/app.js",
-    "start": "yarn build && node build/app.js",
-    "build": "rimraf ./build && prettier --check src/ && tsc",
-    "prettier:fix": "prettier --write src/",
-    "lint": "eslint --ext .ts src/"
+    "start":"nodemon app.ts"
   },
   "engines": {
     "node": "16.x"
