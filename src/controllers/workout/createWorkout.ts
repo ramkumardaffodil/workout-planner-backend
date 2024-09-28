@@ -8,7 +8,7 @@ export const createWorkout = async (req: Request, res: Response) => {
 	if (req.isAuth) {
 		const { age, gender, weight, height, injuries, trainingLevel, trainingType } = req.body;
 		const { _id: userId } = req.user;
-		if (isEmptyFields({ age, gender, weight, height, injuries, trainingLevel })) {
+		if (isEmptyFields({ age, gender, weight, height, trainingLevel })) {
 			return res.status(400).json({ error: 'Either Age/Gender/Weight/Height/TrainingLevel is empty' });
 		}
 		const userDetails = await UserDetails.create({
