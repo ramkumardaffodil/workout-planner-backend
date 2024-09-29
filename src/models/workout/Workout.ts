@@ -1,12 +1,22 @@
 import { Schema, model } from 'mongoose';
 import { IPlans } from './interfaces';
 
+const weightSchema = new Schema({
+	date: { type: String },
+	startWeight: { type: Number }, 
+	endWeight: { type: Number },   
+	weightUnit: { type: String, default: 'kg' }, 
+  });
+  
+
 const exerciseSchema = new Schema({
 	name: { type: String },
 	reps: { type: Number },
 	sets: { type: Number },
 	bodyPart: { type: String },
 	description: { type: String },
+	weights:[weightSchema]
+	
 });
 
 const plansSchema = new Schema(
@@ -17,6 +27,7 @@ const plansSchema = new Schema(
 			{
 				day: String,
 				bodyPart: String,
+				date:String,
 				exercises: [exerciseSchema],
 			},
 		],
@@ -24,6 +35,6 @@ const plansSchema = new Schema(
 	{ timestamps: true }
 );
 
-const PlansSchema = model<IPlans>('plans', plansSchema);
+const PlansSchema = model<IPlans>('plans', plansSchema);	
 
 export default PlansSchema;

@@ -3,6 +3,7 @@ import { isEmptyFields } from '../../utils/errorUtils';
 import UserDetails from '../../models/user/UserDetails';
 import OpenAI from 'openai';
 import PlansSchema from '../../models/workout/Workout';
+import moment from 'moment';
 
 export const createWorkout = async (req: Request, res: Response) => {
 	if (req.isAuth) {
@@ -103,6 +104,11 @@ export const createWorkout = async (req: Request, res: Response) => {
 			.replace(/```/g, '')
 			.trim();
 		plans = JSON.parse(plans);
+		console.log('before modification',plans);
+		//@ts-ignore
+		plans = generateMonthlyWorkout(plans)
+		console.log('after modification',plans);
+
 		//@ts-ignore
 		const workouts = await PlansSchema.create({
 			userId,
@@ -111,12 +117,14 @@ export const createWorkout = async (req: Request, res: Response) => {
 			plans: plans.map((dayPlan: any) => ({
 				day: dayPlan.day,
 				bodyPart: dayPlan.bodyPart,
+				date: dayPlan.date,
 				exercises: dayPlan.exercises.map((exercise: any) => ({
 					name: exercise.name,
 					sets: exercise.sets,
 					reps: exercise.reps,
 					bodyPart: exercise.bodyPart,
 					description: exercise.description,
+					weights: []
 				})),
 			})),
 		});
@@ -125,6 +133,30 @@ export const createWorkout = async (req: Request, res: Response) => {
 		return res.status(403).json({ err: 'Authroization error' });
 	}
 };
+
+const generateMonthlyWorkout = (plans:any) => {
+	const today = moment(); 
+	const daysInMonth = moment(today).daysInMonth(); 
+
+	const monthlyWorkout = [];
+	let currentDate = moment(today);
+	
+	for (let i = 0; i < daysInMonth; i++) {
+	  const dayOfWeek = currentDate.format('dddd'); 
+	  const workoutForDay = plans.find((item: any) => item.day === dayOfWeek); 
+  
+	  if (workoutForDay) {
+		monthlyWorkout.push({
+		  date: currentDate.format('YYYY-MM-DD'), 
+		  ...workoutForDay
+		});
+	  }
+  
+	  currentDate.add(1, 'days'); 
+	}
+  
+	return monthlyWorkout;
+  }
 
 export const getAllPlans = async (req: Request, res: Response) => {
 	if (req.isAuth) {
@@ -160,3 +192,37 @@ export const getSuggestions = async (req: Request, res: Response) => {
 		return res.status(403).json({ error: 'Authroization error' });
 	}
 };
+
+export const markWorkoutAsDone = async (req: Request, res: Response) => {
+	if (req.isAuth) {
+		const { _id: userId } = req.user;
+		const { startWeight, endWeight,planId,exerciseId,date } = req.body;
+		const plan = await PlansSchema.findOne({ userId });
+		if(!plan) return res.status(404).json({ error: 'No Plan found' });
+		//@ts-ignore
+		const selectedPlan = plan.plans.find((p: any) => p._id == planId);
+		if(!selectedPlan) return res.status(404).json({ error: 'No Selected Plan found' });
+		const selectedExercise = selectedPlan.exercises.find((e: any) => e._id == exerciseId);
+		if(!selectedExercise) return res.status(404).json({ error: 'No Selected Exercise Found' });
+		selectedExercise.weights.push({ startWeight, endWeight,date });
+		await plan.save();
+		const plan2 = await PlansSchema.findOne({ userId });
+		return res.json({plan2})
+	}else{
+		return res.status(403).json({ error: 'Authroization error' });
+	}
+};
+
+export const getExercisesForWorkout = async (req: Request, res: Response) => {
+	if (req.isAuth) {
+		const { _id: userId } = req.user;
+		const { planId } = req.query;
+		const plan = await PlansSchema.findOne({ userId });
+		if(!plan) return res.status(404).json({ error: 'No Plan found' });
+		//@ts-ignore
+		const selectedPlan = plan.plans.find((p: any) => p._id == planId);
+		return res.json({  workout:selectedPlan});
+	}else{
+		return res.status(403).json({ error: 'Authroization error' });
+	}
+}
