@@ -25,7 +25,7 @@ const userDetailSchema = new Schema(
 			type: Array,
 		},
 		trainingLevel: {
-			type: String,
+			type: Array,
 			required: [true, 'Please enter Training Level'],
 		},
 		trainingType: {
