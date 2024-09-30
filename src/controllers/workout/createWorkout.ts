@@ -29,65 +29,65 @@ export const createWorkout = async (req: Request, res: Response) => {
 		}
 
 		const prompt = `
-					You are a personalized gym trainer AI designed to create personalized workout plans tailored to the user's body features and preferences. Based on the following user information, generate a detailed workout plan in JSON format with structured responses and an analysis of whether the workout plan fulfills the user's goals, along with reasons.
+		You are a personalized gym trainer AI designed to create personalized workout plans tailored to the user's body features and preferences. Based on the following user information, generate a detailed workout plan in JSON format with structured responses and an analysis of whether the workout plan fulfills the user's goals, along with reasons.
 
-				User Details:
-				- Age: ${age}
-				- Gender: ${gender}
-				- Height: ${height} in cm
-				- Weight: ${weight} in kg
+	  User Details:
+	  - Age: ${age}
+	  - Gender: ${gender}
+	  - Height: ${height} in feet
+	  - Weight: ${weight} in kg
+	  - Injuries: ${injuries ?? 'None'}
 
-				- Injuries: ${injuries ?? 'None'}
+	  Additional Information Provided:
+	  - Gym experience Level: ${trainingLevel ?? 'None'}
+	  - User's goal : ${trainingType ?? 'None'}
 
+	  Please include the following section in the JSON output:
 
-				Additional Information Needed:
-				- Gym experience Level: ${trainingLevel ?? 'None'}
-				- User's goal : ${trainingType ?? 'None'}
+	  1. *data*: A JSON array of object for 6 days of the week with training on a single body part per day. Body parts will be Chest, Back, Biceps, Triceps, Shoulders and Legs. Ideally a body part should not be trained more than twice in a week and only one body part should be trained per day.
+	  For a particular day, there should be at least 3 exercises per body part.
 
-				Please include the following sections in the JSON output:
+	  Instructions
+	  - Ensure that the workout plan, exercises, exercise reps, and sets align with the user's goal (e.g., weight loss, muscle gain, etc.), gym experience, and the user’s body attributes (age, gender, height, weight).
+	  - If the user has injuries, suggest modifications to avoid stress on affected areas.
+	  - Tailor the workout intensity based on the user's age and experience level (e.g., beginners should have simpler exercises).
+	  - Ensure your model should not suggest exercises for Sunday.
+	  - Ensure that your model does not return anything after the array of objects.
 
-				1. **data**: A JSON arrray of object for 6 days of the week with training on a single body part per day. Body parts will be Chest, Back, Biceps, Triceps, Shoulders and Legs. Ideally a body part should not be trained more than twice in a week and only one body part should be trained per day.
-				For a particular day, there should be atleast 3 exercises per body part.
+	  Format the output in JSON as follows:(Strictly follow the json format, please do not add any other information)
 
-				Instructions:
-				- Ensure that the workout plan aligns with the user's goal (e.g., weight loss, muscle gain).
-				- Ensure that your model should not suggest excercises for sunday.
-				- Ensure that your model does not return anything after array of object.
-
-				Format the output in JSON as follows:(Strictly follow the json format, please do not add any other information)
-
-				[
-					{
-						"day": "Monday",
-						"bodyPart":"Chest",
-						"exercises": [
-										{
-											"name": "Bench Press",
-											"sets": 4,
-											"reps": 8,
-											"bodyPart": "Chest",
-											"description": "Focus on pushing the barbell off your chest to strengthen your chest, shoulders, and triceps."
-										},
-										....
-								    ],
-					},
-					{
-						"day": "Tuesday",
-						"body_part": "Legs",
-						"exercises": [
-										{
-											"name": "Lunges",
-											"sets": 3,
-											"reps": 12,
-											"bodyPart": "Legs",
-											"description": "A lower body movement that targets the quads and glutes. Alternate legs with each step."
-									    }
-							        ],
-							     ...
-					},
-					...
-					]
-	    `;
+	  [
+		{
+		  "day": "Monday",
+		  "bodyPart":"Chest",
+		  "exercises": [
+				  {
+					"name": "Bench Press",
+					"sets": 4,
+					"reps": 8,
+					"bodyPart": "Chest",
+					"description": "Focus on pushing the barbell off your chest to strengthen your chest, shoulders, and triceps."
+				  },
+				  ....
+				  ],
+		},
+		{
+		  "day": "Tuesday",
+		  "body_part": "Legs",
+		  "exercises": [
+				  {
+					"name": "Lunges",
+					"sets": 3,
+					"reps": 12,
+					"bodyPart": "Legs",
+					"description": "A lower body movement that targets the quads and glutes. Alternate legs with each step."
+					}
+					],
+				 ...
+		},
+		...
+		]
+	`;
 
 		const openai = new OpenAI({
 			apiKey: process.env.OPEN_API_KEY,
